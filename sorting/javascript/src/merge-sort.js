@@ -1,5 +1,86 @@
 /**
- * Merges 2 lists (implementation is iterative).
+ * Merges 2 lists (iterative recursive, with CPS implementation).
+ */
+function merge_recursive_iterative_cps(left, right) {
+    function m_recur_itr_cps(left, right, result, k) {
+        if (left.length == 0 && right.length == 0) {
+            return k(result);
+        } else if (left.length == 0) {
+            return k(result.concat(right));
+        } else if (right.length == 0) {
+            return k(result.concat(left));
+        } else {
+            if (left[0] < right[0]) {
+                return m_recur_itr_cps(restOfArray(left), right, result.concat(left[0]), k);
+            } else {
+                return m_recur_itr_cps(left, restOfArray(right), result.concat(right[0]), k);
+            }
+        }
+    }
+    return m_recur_itr_cps(left, right, [], function(x) {return x;});
+}
+
+/**
+ * Merges 2 lists (iterative recursive implementation).
+ */
+function merge_recursive_iterative(left, right) {
+    function m_recur_itr(left, right, result) {
+        if (left.length == 0 && right.length == 0) {
+            return result;
+        } else if (left.length == 0) {
+            return result.concat(right);
+        } else if (right.length == 0) {
+            return result.concat(left);
+        } else {
+            if (left[0] < right[0]) {
+                return m_recur_itr(restOfArray(left), right, result.concat(left[0]));
+            } else {
+                return m_recur_itr(left, restOfArray(right), result.concat(right[0]));
+            }
+        }
+    }
+    return m_recur_itr(left, right, []);
+}
+
+/**
+ * Merges 2 lists (recursive implementation).
+ */
+function merge_recursive(left, right) {
+    if (left.length == 0 && right.length == 0) {
+        return [];
+    } else if (left.length == 0) {
+        return right;
+    } else if (right.length == 0) {
+        return left;
+    } else {
+        if (left[0] < right[0]) {
+            return new Array().concat(left[0]).concat(merge_recursive(restOfArray(left), right));
+        } else {
+            return new Array().concat(right[0]).concat(merge_recursive(left, restOfArray(right)));
+        }
+    }
+}
+
+/**
+ * Merge sort (recursive implementation).
+ */
+function mergeSort_recursive(list) {
+    var left, right;
+    var leftUpperBound;
+    var merged;
+    if (list.length <= 1) {
+        return list;
+    } else {
+        leftUpperBound = Math.floor(list.length / 2);
+        left = subArray(list, 0, leftUpperBound);
+        right = subArray(list, leftUpperBound, list.length);
+        return merge_recursive(mergeSort_recursive(left),
+                               mergeSort_recursive(right));
+    }
+}
+
+/**
+ * Merges 2 lists (iterative implementation).
  */
 function merge_iterative(left, right) {
     var result;
