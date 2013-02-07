@@ -51,9 +51,12 @@ calls are naturally in the tail position, and thus allows the usage of recur."
                     (recur left (rest right) (conj result right-first)))))))]
     (merge-iterative-internal left right [])))
 
+; instead of using take and nthrest to get left/right, it would be better
+; to use split-at
+
 (defn merge-sort
   "Sorts the given list using merge sort algorithm.  Because merge-serge is
-doubly recusive, it is not possible to yield a purely iterative process; it
+doubly recusive, it is difficult to yield a purely iterative process; it
 is not possible to use recur.  Therefore, in order to prevent stack growth,
 the trampoline technique is leveraged."
   [l]
@@ -68,3 +71,46 @@ the trampoline technique is leveraged."
                 (merge-iterative (trampoline #(merge-sort-tramp left))
                                  (trampoline #(merge-sort-tramp right))))))]
     (trampoline #(merge-sort-tramp l))))
+
+(defn merge-sort-cps-notramp
+  "Sorts the given list using merge sort algorithm.  This implementation uses
+continuation-passing style in order to put recursive call into tail position."
+  [l]
+  (letfn [(merge-sort-cps-int [l k]
+            (if (or (nil? l)
+                    (= (count l) 0)
+                    (= (count l) 1))
+              (k l)
+              (let [count-halved (int (/ (count l) 2))
+                    left (take count-halved l)
+                    right (nthrest l count-halved)]
+                (merge-sort-cps-int
+                 left
+                 (fn [left-sub-l]
+                   (merge-sort-cps-int
+                    right
+                    (fn [right-sub-l]
+                      (k (merge-iterative left-sub-l right-sub-l)))))))))]
+    (merge-sort-cps-int l (fn [l] l))))
+
+(defn merge-sort-cps-tramp
+    "Sorts the given list using merge sort algorithm.  This implementation uses
+continuation-passing style in order to put recursive call into tail position;
+and also uses trampoline in order to prevent stack growth."
+  [l]
+  (letfn [(merge-sort-cps-int [l k]
+            (if (or (nil? l)
+                    (= (count l) 0)
+                    (= (count l) 1))
+              (trampoline #(k l))
+              (let [count-halved (int (/ (count l) 2))
+                    left (take count-halved l)
+                    right (nthrest l count-halved)]
+                (recur
+                 left
+                 (fn [left-sub-l]
+                   #(merge-sort-cps-int
+                     right
+                     (fn [right-sub-l]
+                       (k (merge-iterative left-sub-l right-sub-l)))))))))]
+    (merge-sort-cps-int l (fn [l] l))))

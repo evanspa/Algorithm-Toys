@@ -1,4 +1,4 @@
-(ns ^{:doc "Playing with continuation-style passing."
+(ns ^{:doc "Playing with continuation-passing style."
       :author "Paul Evans"}
     toys.cps)
 
