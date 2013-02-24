@@ -4,7 +4,8 @@
     toys.insertion-sort)
 
 (defn insert
-  "Inserts value into sorted list."
+  "Inserts value into sorted list.  Involves recursion yielding an iterative
+process."
   [value list]
   (loop [list list
          newlist []]
@@ -24,7 +25,8 @@
                    (cons (last list) newlist))))))))
 
 (defn insertion-sort
-  "Sorts list using insertion sort algorithm."
+  "Sorts list using insertion sort algorithm.  Involves recursion yielding
+an interative process."
   [list]
   (if (or (empty? list)
           (= (count list) 1))
