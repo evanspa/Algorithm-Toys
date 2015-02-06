@@ -1,2 +1,2 @@
-# Toys
-Scratch pad repository for toy code and experiments.
+# Algorithm-Toys
+Scratch pad repository for playing around with various algorithms.
