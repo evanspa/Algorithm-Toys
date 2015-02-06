@@ -1,6 +1,6 @@
 (ns ^{:doc "Playing with continuation-passing style."
       :author "Paul Evans"}
-    toys.cps)
+  toys.cps)
 
 (defn fib-recursive [x]
   (if (< x 2)
